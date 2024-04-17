@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+  <body>
+<%- include('partials/_header.ejs') %>
+    <main role="main" class="container mt-4">
+      <div class="text-center">
+        <h1>PCBV2</h1>
+        <form id="designForm" action="/designs/interpret" method="POST">
+          <div class="form-group">
+            <label for="designDescription">Describe your PCB design:</label>
+            <textarea class="form-control" id="designDescription" name="designDescription" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div id="followUpQuestions" style="display:none;">
+          <!-- Follow-up questions will be injected here -->
+        </div>
+        <div id="completeMessage" style="display:none;">
+          <!-- Message for complete design description will be injected here -->
+        </div>
+      </div>
+    </main>
+  </body>
+<%- include('partials/_footer.ejs') %>
+  <script src="/js/main.js"></script>
+  <script>
+    document.getElementById('designForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const designDescription = document.getElementById('designDescription').value;
+      fetch('/designs/interpret', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ designDescription: designDescription }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        const followUpDiv = document.getElementById('followUpQuestions');
+        const completeMessageDiv = document.getElementById('completeMessage');
+        followUpDiv.innerHTML = ''; // Clear previous questions if any
+        completeMessageDiv.innerHTML = ''; // Clear previous complete messages if any
+        if (data.questions && data.questions.length > 0) {
+          const form = document.createElement('form');
+          form.id = 'followUpForm';
+          data.questions.forEach((question, index) => {
+            const label = document.createElement('label');
+            label.textContent = question;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `answer${index}`;
+            input.required = true;
+            form.appendChild(label);
+            form.appendChild(document.createElement('br'));
+            form.appendChild(input);
+            form.appendChild(document.createElement('br'));
+          });
+          const submitButton = document.createElement('button');
+          submitButton.type = 'submit';
+          submitButton.textContent = 'Submit Answers';
+          form.appendChild(submitButton);
+          followUpDiv.appendChild(form);
+          followUpDiv.style.display = 'block';
+          completeMessageDiv.style.display = 'none';
+
+          document.getElementById('followUpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const answers = Array.from(document.querySelectorAll('#followUpForm input[type="text"]')).map(input => input.value);
+            fetch('/designs/refine', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ answers: answers }),
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Answers submitted:', data);
+              alert('Answers submitted successfully.');
+            })
+            .catch(error => {
+              console.error('Error submitting answers:', error);
+              alert('An error occurred while submitting your answers. Please try again.');
+            });
+          });
+        } else if (data.message && data.message.includes('Design description is complete')) {
+          const p = document.createElement('p');
+          p.textContent = 'Your design description is complete. We are now proceeding to generate the Gerber file.';
+          completeMessageDiv.appendChild(p);
+          completeMessageDiv.style.display = 'block';
+          followUpDiv.style.display = 'none';
+        } else {
+          console.log('No follow-up questions received.');
+          const p = document.createElement('p');
+          p.textContent = 'No follow-up questions available. Please refine your design description and try again.';
+          followUpDiv.appendChild(p);
+          followUpDiv.style.display = 'block';
+          completeMessageDiv.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('Error displaying follow-up questions or complete message:', error);
+        alert('An error occurred while processing your design description. Please try again.');
+      });
+    });
+  </script>
+</html>
