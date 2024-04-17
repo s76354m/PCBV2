@@ -30,6 +30,7 @@ const openAIRequest = (userInput, followUp = false) => {
     return response;
   }).catch(error => {
     console.error("Error making OpenAI API request:", error.response ? error.response.data : error);
+    console.error("Full error:", error);
     throw error;
   });
 };
@@ -57,6 +58,7 @@ const extractFollowUpQuestions = (openAIResponse) => {
     return { questions, isComplete };
   } catch (error) {
     console.error("Error extracting follow-up questions:", error);
+    console.error("Full error:", error);
     throw error;
   }
 };

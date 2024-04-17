@@ -1,33 +1,33 @@
 # PCBV2
 
-PCBV2 is an innovative web application designed to transform user-inputted PCB design goals described in free text into ready-to-use Gerber files. By leveraging the power of OpenAI's GPT-4 for intelligent question generation and component identification, PCBV2 streamlines the process from concept to production-ready PCB design.
+PCBV2 is an innovative web application designed to automate the PCB design process from concept to Gerber file generation. Leveraging OpenAI's GPT-4, it interprets user-described goals in natural language, identifies necessary components, and outputs a Gerber file sketch.
 
 ## Overview
 
-PCBV2 utilizes a modern tech stack including Node.js, Express, MongoDB, Mongoose, and EJS for server-side rendering, with Bootstrap for the frontend. The application operates statelessly, without requiring user accounts or data persistence beyond the current session. Integration with OpenAI's API facilitates dynamic interaction with users to refine PCB design requirements.
+PCBV2 employs a Node/Express/MongoDB/Mongoose/EJS stack for backend and server-side rendering, with Bootstrap enhancing the frontend. The integration with OpenAI's API enables dynamic interaction, refining user inputs into precise design specifications. Stateless operation ensures a streamlined user experience without the need for account management.
 
 ## Features
 
-- **User-Driven Design Input**: Start with a simple description of your PCB design goals.
-- **Intelligent Interaction**: Utilizes OpenAI's GPT-4 to ask follow-up questions, ensuring accurate component selection and design specifications.
-- **Automated Gerber File Generation**: Translates the final design requirements into Gerber files, ready for manufacturing.
-- **Stateless Operation**: No need for user accounts, ensuring simplicity and ease of use.
+- **Natural Language Processing**: Interprets free-text design descriptions.
+- **Dynamic Questioning**: Uses GPT-4 to ask follow-up questions, refining design requirements.
+- **Component Identification**: Identifies all standard PCB components necessary for the design.
+- **Gerber File Generation**: Outputs a Gerber file ready for manufacturing.
 
-## Getting started
+## Getting Started
 
 ### Requirements
 
 - Node.js
 - MongoDB
-- An OPENAI_API_KEY for integrating GPT-4
+- An OpenAI API key
 
 ### Quickstart
 
-1. Clone the repository to your local machine.
-2. Install dependencies by running `npm install` in the project root.
-3. Set up your `.env` file based on `.env.example`, including your MongoDB URL and OPENAI_API_KEY.
-4. Start the application with `npm start`. The server will run on the specified PORT, defaulting to 3000 if not specified.
-5. Access the application through `http://localhost:3000` in your web browser.
+1. Clone the repository and navigate to the project directory.
+2. Install dependencies with `npm install`.
+3. Set up your `.env` file as per the `.env.example` template.
+4. Run `npm start` to launch the application on the default port (3000) or your specified port.
+5. Access the web application via `http://localhost:3000`.
 
 ### License
 

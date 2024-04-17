@@ -1,3 +1,5 @@
+What are the best apps available to create applications that are similar to devinai or devika?
+
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
@@ -78,6 +80,17 @@
             .then(data => {
               console.log('Answers submitted:', data);
               alert('Answers submitted successfully.');
+              if(data.message && data.message.includes('Design description is complete')) {
+                // Handle completion of design description
+                const p = document.createElement('p');
+                p.textContent = 'Your design description is complete. We are now proceeding to generate the Gerber file.';
+                completeMessageDiv.appendChild(p);
+                completeMessageDiv.style.display = 'block';
+                followUpDiv.style.display = 'none';
+              } else {
+                // Handle additional follow-up questions if any
+                displayFollowUpQuestions(data.questions);
+              }
             })
             .catch(error => {
               console.error('Error submitting answers:', error);
@@ -104,5 +117,35 @@
         alert('An error occurred while processing your design description. Please try again.');
       });
     });
+
+    function displayFollowUpQuestions(questions) {
+      const followUpQuestionsDiv = document.getElementById("followUpQuestions");
+      followUpQuestionsDiv.innerHTML = ""; // Clear previous questions
+      if (questions && questions.length > 0) {
+          const form = document.createElement('form');
+          form.id = 'followUpForm';
+          questions.forEach((question, index) => {
+              const label = document.createElement('label');
+              label.textContent = question;
+              const input = document.createElement('input');
+              input.type = 'text';
+              input.name = `answer${index}`;
+              input.required = true;
+              form.appendChild(label);
+              form.appendChild(document.createElement('br'));
+              form.appendChild(input);
+              form.appendChild(document.createElement('br'));
+          });
+          const submitButton = document.createElement('button');
+          submitButton.type = 'submit';
+          submitButton.textContent = 'Submit Answers';
+          form.appendChild(submitButton);
+          followUpQuestionsDiv.appendChild(form);
+          followUpQuestionsDiv.style.display = 'block';
+      } else {
+          followUpQuestionsDiv.style.display = "none";
+          alert("Design description is complete. Proceeding to the next step.");
+      }
+    }
   </script>
 </html>
